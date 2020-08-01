@@ -1,0 +1,4 @@
+```shell
+curl icanhazip.com
+```
+
