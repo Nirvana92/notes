@@ -25,6 +25,7 @@ abstract static class Sync extends AbstractQueuedSynchronizer {
             final Thread current = Thread.currentThread();
             int c = getState();
             if (c == 0) {
+              	// 非公平锁在这体现: 不管当前线程在队列的哪个位置, 只要释放锁了, 就去竞争
                 if (compareAndSetState(0, acquires)) {
                     setExclusiveOwnerThread(current);
                     return true;
@@ -101,6 +102,7 @@ static final class FairSync extends Sync {
             final Thread current = Thread.currentThread();
             int c = getState();
             if (c == 0) {
+              	// 公平锁的体现: 如果有前置节点. 不进行尝试获取锁的操作.按照等待队列中的顺序进行锁的竞争
                 if (!hasQueuedPredecessors() &&
                     compareAndSetState(0, acquires)) {
                     setExclusiveOwnerThread(current);
@@ -119,3 +121,83 @@ static final class FairSync extends Sync {
     }
 ```
 
+公平锁和非公平锁的`lock()` 方法最终都会执行到 `aqs`中的``
+
+```java
+public final void acquire(int arg) {
+  			// tryAcquire 最终会执行到子类的实现: NonfairSync和 FairSync 的实现。
+        if (!tryAcquire(arg) &&
+            // addWaiter(Node) 添加到队列尾
+            // 
+            acquireQueued(addWaiter(Node.EXCLUSIVE), arg))
+            selfInterrupt();
+    }
+```
+
+aqs中`acquireQueued()`的代码: 
+
+```java
+final boolean acquireQueued(final Node node, int arg) {
+        boolean failed = true;
+        try {
+            boolean interrupted = false;
+            for (;;) {
+                final Node p = node.predecessor();
+                if (p == head && tryAcquire(arg)) {
+                    setHead(node);
+                    p.next = null; // help GC
+                    failed = false;
+                    return interrupted;
+                }
+              	// shouldParkAfterFailedAcquire() 方法判断前置节点的waitState是否是SIGNAL, 如果不是判断前置节点是否被取消[CANCELLED]; 如果取消了, 过滤掉CANCELLED 节点。最后将前置节点waitState 设置为 SIGNAL。
+                if (shouldParkAfterFailedAcquire(p, node) &&
+                    parkAndCheckInterrupt())
+                    interrupted = true;
+            }
+        } finally {
+            if (failed)
+                cancelAcquire(node);
+        }
+    }
+```
+
+aqs中`shouldParkAfterFailedAcquire`的代码: 
+
+```java
+private static boolean shouldParkAfterFailedAcquire(Node pred, Node node) {
+        int ws = pred.waitStatus;
+        if (ws == Node.SIGNAL)
+            /*
+             * This node has already set status asking a release
+             * to signal it, so it can safely park.
+             */
+            return true;
+        if (ws > 0) {
+            /*
+             * Predecessor was cancelled. Skip over predecessors and
+             * indicate retry.
+             */
+            do {
+                node.prev = pred = pred.prev;
+            } while (pred.waitStatus > 0);
+            pred.next = node;
+        } else {
+            /*
+             * waitStatus must be 0 or PROPAGATE.  Indicate that we
+             * need a signal, but don't park yet.  Caller will need to
+             * retry to make sure it cannot acquire before parking.
+             */
+            compareAndSetWaitStatus(pred, ws, Node.SIGNAL);
+        }
+        return false;
+    }
+```
+
+
+
+
+
+问题: 
+
+1. aqs 为什么通过前置节点状态判断是否需要阻塞
+2. 
