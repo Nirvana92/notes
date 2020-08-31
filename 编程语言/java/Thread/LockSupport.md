@@ -1,0 +1,1 @@
+可以参考`LockSupport` 类的注释
