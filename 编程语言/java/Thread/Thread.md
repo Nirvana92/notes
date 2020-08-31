@@ -59,3 +59,30 @@ public static void main(String[] args) {
     }
 ```
 
+`Thread`的一些方法: 
+
+```java
+// 告知调度者当前线程可以让出执行; 调度者可以随意忽略此请求
+public static native void yield();
+// 线程睡眠
+public static native void sleep(long millis);
+// 该线程可以执行; JVM虚拟机会调用线程的run方法; 结果是两个线程同时执行; 一个线程执行start方法, 另一个执行run方法
+public synchronized void start();
+// 如果当前线程通过runnable 构造; 则会执行runnable 中的run方法; 如果不是通过runnable构造则什么也不做直接返回
+public void run();
+// 该方法交给系统执行; 作用是在真正结束之前完成清理工作
+private void exit();
+// 强制终止线程
+// 非安全的; 所以过期处理: 
+// 调用stop会释放所有已经获取的monitors ;
+public final void stop();
+// 中断线程
+public void interrupt();
+// 挂起线程
+public final void suspend();
+// 恢复一个挂起线程
+public final void resume();
+// 
+public static native boolean holdsLock(Object obj);
+```
+
