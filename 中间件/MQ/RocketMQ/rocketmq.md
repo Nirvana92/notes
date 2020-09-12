@@ -20,7 +20,7 @@ rocketmq 环境搭建: 在docker 中搭建
 
 1. 拉取镜像: 上面已经拉取过了就不需要。
 
-2. 在 `{RmHome}/conf` 目录下创建 `boker.conf`文件
+2. 在 `{RmHome}/conf` 目录下创建 `broker.conf`文件
 
 3. 在`broker.conf`中写入如下内容
 
