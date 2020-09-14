@@ -1,10 +1,16 @@
 ##### docker 安装
 
-下载镜像: `docker pull elasticsearch:7.6.2`
+下载`Elasticsearch`镜像: 
 
-运行: `docker run -d -e "discovery.type=single-node" -p 9200:9200  elasticsearch:7.6.2`
+```shell
+> docker pull elasticsearch:7.6.2
+```
 
+运行命令: 
 
+```shell
+> docker run -d -e "discovery.type=single-node" -p 9200:9200  elasticsearch:7.6.2
+```
 
 注意: 
 
@@ -76,7 +82,7 @@ OpenJDK 64-Bit Server VM warning: INFO: os::commit_memory(0x00000000c5330000, 98
 启动连接到Elasticsearch:
 
 ```
-> docker run -d --name kibana --link=node1 -p 5601:5601 kibana:7.6.2
+> docker run -d --name kibana --link={es-containid} -p 5601:5601 kibana:7.6.2
 ```
 
 启动之后访问`centos7-docker:5601`会提示下面错误信息: 
@@ -85,7 +91,7 @@ OpenJDK 64-Bit Server VM warning: INFO: os::commit_memory(0x00000000c5330000, 98
 Kibana server is not ready yet
 ```
 
-进入到Kibana容器, 编辑 /config/kibana.yml 配置文件: 
+进入到Kibana容器, 编辑 `/config/kibana.yml` 配置文件: 
 
 ```
 server.name: kibana
@@ -111,13 +117,9 @@ Content-Type: application/json
 
 ```
 
-
-
 查询数据: 
 
 ` GET http://localhost:9200/megacorp/employee/1`
-
-
 
 集群健康: 
 
