@@ -243,3 +243,22 @@ POST /_all/_search
 GET /_search?q=birth:2020-09-14
 ```
 
+
+
+es 内置分词器: 
+
+`Standard: `默认分词器, 按词切分, 小写处理。
+
+`Simple: `按照非字母切分, 小写处理。
+
+`Stop:` 小写处理, 停用词过滤(the, a, is)
+
+`Whitespace: `按照空格切分, 不转小写。
+
+`Keyword: `不分词, 直接将输入当做输出。
+
+`Patter: `正则表达式, 默认非字符分割。
+
+`Language: `提供了30多种常见语言的分词器。
+
+`Customer: `自定义分词器。
