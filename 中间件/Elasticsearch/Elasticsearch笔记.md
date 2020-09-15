@@ -90,7 +90,7 @@ Kibana server is not ready yet
 ```
 server.name: kibana
 server.host: "0"
-# 讲hosts 换成目标elasticsearch, 默认elasticsearch
+# 将hosts 换成目标elasticsearch, 默认elasticsearch
 elasticsearch.hosts: [ "http://node1:9200" ]
 xpack.monitoring.ui.container.elasticsearch.enabled: true
 ```
