@@ -14,6 +14,6 @@
 
 写入到 doublewrite buffer -> 写**pages** 信息到 **data files**; doublewrite 需要两次写入。但是通过fsync() 只需要一次io操作。
 
+`doublewrite` 的作用: `https://www.cnblogs.com/geaozhang/p/7241744.html`
 
-
-doublewrite 解决了 partial write[页断裂] 问题.
+doublewrite 解决了 `partial page write`[页断裂] 问题.
